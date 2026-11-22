@@ -70,25 +70,43 @@ while True:
             elif event.key == pygame.K_RIGHT and direction != (-BLOCK_SIZE, 0):
                 direction = (BLOCK_SIZE, 0)
 
-    # Update snake position
-    new_head = (
-        snake[0][0] + direction[0],
-        snake[0][1] + direction[1]
-    )
+   # Update snake position
+new_head = (
+    snake[0][0] + direction[0],
+    snake[0][1] + direction[1]
+)
 
-    snake.insert(0, new_head)
+snake.insert(0, new_head)
 
-    # Check food collision
-    if new_head == food:
-        score += 1
+# Check whether food is eaten
+ate_food = new_head == food
 
-        while True:
-            food = (
-                random.randrange(0, WIDTH, BLOCK_SIZE),
-                random.randrange(0, HEIGHT, BLOCK_SIZE)
-            )
-            if food not in snake:
-                break
+if not ate_food:
+    snake.pop()
+
+# Check wall collision
+if (
+    new_head[0] < 0 or new_head[0] >= WIDTH or
+    new_head[1] < 0 or new_head[1] >= HEIGHT
+):
+    game_over = True
+
+# Check self collision
+if new_head in snake[1:]:
+    game_over = True
+
+# Increase score and generate new food
+if ate_food and not game_over:
+    score += 1
+
+    while True:
+        food = (
+            random.randrange(0, WIDTH, BLOCK_SIZE),
+            random.randrange(0, HEIGHT, BLOCK_SIZE)
+        )
+
+        if food not in snake:
+            break
     else:
         snake.pop()
 
